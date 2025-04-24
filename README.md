@@ -1,6 +1,6 @@
 # EMJson C++ Library
 
-A C++ library for parsing JSON data, built using a Deterministic Finite Automaton (DFA) approach.
+A C++ library for parsing JSON data, built using a DFAction approach.
 
 ## Prerequisites
 
