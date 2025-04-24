@@ -1,0 +1,33 @@
+#define DFACTION_TYPES
+#define DFACTION_STATES
+
+
+enum DFActionState {
+    EMJ_TYPE_CHECK = 0,
+    EMJ_BOOLEAN_NULL_HANDLER = 1,
+    EMJ_OBJECT_HANDLER = 2,
+    EMJ_ARRAY_HANDLER = 3,
+    EMJ_STRING_HANDLER = 4,
+    EMJ_NUMBER_HANDLER = 5,
+    EMJ_KEY_HANDLER = 6,
+    EMJ_MAIN_OBJ = 7,
+};
+
+enum DFActionType {
+    EMJ_OP_BRACE ,
+    EMJ_CLOSE_BRACE,
+    EMJ_STRING,
+    EMJ_NUMBER,
+    EMJ_OP_BRAKET,
+    EMJ_CLOSE_BRAKET,
+    EMJ_NULL,
+    EMJ_CAMMA,
+    EMJ_DOUBLE_DOT,
+    EMJ_TRUE,
+    EMJ_FALSE,
+
+    EMJ_IGNORES,
+};
+
+using DFActionVal = std::string_view;
+
