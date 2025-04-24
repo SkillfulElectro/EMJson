@@ -1,23 +1,20 @@
 #include "em_json.h"
 
 std::string EMJson::to_json(const EMJsonData& data){
-    // Check if the top-level data is an object
     if (data.type != OBJECT) {
-         // Return empty string if top-level isn't an object, as per original design
          return "";
     }
 
     std::string json_str = "{";
     bool first_pair = true;
 
-    try { // Add try-catch here for safety, though less likely to be needed now
+    try {
         const auto& obj = std::get<EMJsonObject>(data.value);
 
         for (const auto& pair : obj) {
             if (!first_pair) {
                 json_str += ",";
             }
-            // Basic escaping for the key string
             std::string escaped_key;
              for (char c : pair.first) {
                 if (c == '"') {
@@ -30,15 +27,11 @@ std::string EMJson::to_json(const EMJsonData& data){
             }
             json_str += "\"" + escaped_key + "\":";
 
-            // Serialize the value using the helper function
             json_str += serialize_value(pair.second);
 
             first_pair = false;
         }
     } catch (const std::bad_variant_access& e) {
-         // Handle cases where std::get fails (type mismatch)
-         // This shouldn't happen if the outer check (data.type == OBJECT) passes
-         // But adding for robustness. We append an error message inside the object.
          if (!first_pair) json_str += ",";
          json_str += "\"<ERROR:TopLevelVariantAccess>\":\"true\"";
     }
@@ -51,14 +44,13 @@ std::string EMJson::to_json(const EMJsonData& data){
 std::string EMJson::serialize_value(const EMJsonData& data) {
     std::stringstream ss;
 
-    try { // Add try-catch here to handle potential bad_variant_access internally
+    try {
         switch (data.type) {
             case NUMBER:
                 ss << std::get<double>(data.value);
                 return ss.str();
 
             case STRING:
-                // Basic escaping for quotes needed for valid JSON output
                 {
                     std::string escaped_str;
                     std::string original_str = std::get<std::string>(data.value);
@@ -89,7 +81,7 @@ std::string EMJson::serialize_value(const EMJsonData& data) {
                     if (!first_element) {
                         arr_str += ",";
                     }
-                    arr_str += serialize_value(element); // Recursive call
+                    arr_str += serialize_value(element);
                     first_element = false;
                 }
                 arr_str += "]";
@@ -97,21 +89,19 @@ std::string EMJson::serialize_value(const EMJsonData& data) {
             }
 
             case OBJECT:
-                // Recursive call to the main function for nested objects
                 return to_json(data);
 
             default:
-                // Return an error indicator string instead of throwing
                 return "\"<ERROR:UnknownDataType>\"";
         }
     } catch (const std::bad_variant_access& e) {
-        // Handle cases where std::get fails (type mismatch)
         return "\"<ERROR:VariantAccess>\"";
     }
 }
 
 EMJsonData EMJson::parse(const std::string& json) {
-
+    obj_stack.clear();
+    field_stack.clear();
 
     obj_stack.push_back(EMJsonObject{});
 
