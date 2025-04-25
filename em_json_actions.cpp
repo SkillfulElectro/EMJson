@@ -268,7 +268,7 @@ DFActionFlow EMJson::emj_key_handler(
 
     switch(token.type) {
     case EMJ_STRING: {
-        auto field_name = std::string(token.value); // Assuming token.value holds the string key
+        auto field_name = std::string(std::string(token.value).substr(1, token.value.length() - 2));
         field_stack.push_back(field_name);
 
         return {DFACTION_BACK_TO_PREV , DFActionState(0)};

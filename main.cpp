@@ -9,6 +9,9 @@ int main() {
 
     auto res = parser.parse(j_file);
 
+    auto obj = std::get<EMJsonObject>(res.value);
+
+    std::cout << std::get<double>(obj["version"].value) << "\n";
 
     std::cout << EMJson::to_json(res) << std::endl;
     return 0; // Indicate successful execution
