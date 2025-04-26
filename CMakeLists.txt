@@ -5,7 +5,6 @@ project(EMJson LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-
 include_directories(.)
 include_directories(sys)
 
@@ -28,31 +27,11 @@ target_include_directories(emjson PUBLIC
 target_compile_features(emjson PRIVATE cxx_std_17)
 
 
-
-set_target_properties(emjson PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib" 
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib" 
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin" 
-)
-
-
-
 add_executable(emjson_test main.cpp)
-
-
-set_target_properties(emjson_test PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin" 
-)
-
 
 
 target_link_libraries(emjson_test PRIVATE emjson)
 
 
 enable_testing()
-
-add_test(
-    NAME RunEmjsonTest
-    COMMAND $<TARGET_FILE:emjson_test> 
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bin 
-)
+add_test(NAME RunEmjsonTest COMMAND emjson_test)
