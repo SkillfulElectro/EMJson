@@ -1,72 +1,63 @@
-# .github/workflows/ci.yml
+# .github/workflows/cmake-multi-platform.yml
 name: CMake on multiple platforms
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
-    branches: [ "main" ]
+    branches: [main]
 
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        build_type: [Release]
         include:
           - os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
+            build_type: Release
           - os: windows-latest
             c_compiler: clang
             cpp_compiler: clang++
+            build_type: Release
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
+            build_type: Release
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
+            build_type: Release
           - os: macos-latest
             c_compiler: clang
             cpp_compiler: clang++
-        exclude:
-          - os: windows-latest
-            c_compiler: gcc
-          - os: ubuntu-latest
-            c_compiler: cl
-          - os: macos-latest
-            c_compiler: cl
-          - os: macos-latest
-            c_compiler: gcc
+            build_type: Release
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Set reusable strings
-      id: strings
-      shell: bash
-      run: |
-        echo "build_output_dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+      - name: Set build dir
+        id: vars
+        run: echo "build_output_dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
-    - name: Configure CMake
-      run: |
-        cmake -B ${{ steps.strings.outputs.build_output_dir }} \
-              -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} \
-              -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} \
-              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-              -S ${{ github.workspace }}
+      - name: Configure CMake
+        run: |
+          cmake -B "${{ steps.vars.outputs.build_output_dir }}" \
+                -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} \
+                -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} \
+                -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+                -S "${{ github.workspace }}"
 
-    - name: Build
-      run: cmake --build ${{ steps.strings.outputs.build_output_dir }} --config ${{ matrix.build_type }}
+      - name: Build
+        run: cmake --build "${{ steps.vars.outputs.build_output_dir }}" --config ${{ matrix.build_type }}
 
-    - name: Test
-      working-directory: ${{ steps.strings.outputs.build_output_dir }}
-      run: ctest -C ${{ matrix.build_type }} --output-on-failure
+      - name: Test
+        working-directory: ${{ steps.vars.outputs.build_output_dir }}
+        run: ctest -C ${{ matrix.build_type }} --output-on-failure
 
-    - name: Upload Build Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-${{ matrix.os }}-${{ matrix.c_compiler }}-${{ matrix.build_type }}
-        path: ${{ steps.strings.outputs.build_output_dir }}
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ matrix.os }}-${{ matrix.c_compiler }}-${{ matrix.build_type }}
+          path: ${{ steps.vars.outputs.build_output_dir }}
