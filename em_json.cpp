@@ -1,7 +1,7 @@
 #include "em_json.h"
 
 std::string EMJson::to_json(const EMJsonData& data){
-    if (data.type != OBJECT) {
+    if (data.type != EMJ_TYPE_OBJECT) {
          return "";
     }
 
@@ -46,11 +46,11 @@ std::string EMJson::serialize_value(const EMJsonData& data) {
 
     try {
         switch (data.type) {
-            case NUMBER:
+            case EMJ_TYPE_NUMBER:
                 ss << std::get<double>(data.value);
                 return ss.str();
 
-            case STRING:
+            case EMJ_TYPE_STRING:
                 {
                     std::string escaped_str;
                     std::string original_str = std::get<std::string>(data.value);
@@ -67,13 +67,13 @@ std::string EMJson::serialize_value(const EMJsonData& data) {
                 }
 
 
-            case BOOLEAN:
+            case EMJ_TYPE_BOOLEAN:
                 return std::get<bool>(data.value) ? "true" : "false";
 
-            case NULLVAL:
+            case EMJ_TYPE_NULLVAL:
                 return "null";
 
-            case ARRAY: {
+            case EMJ_TYPE_ARRAY: {
                 std::string arr_str = "[";
                 const auto& vec = std::get<EMJsonArray>(data.value);
                 bool first_element = true;
@@ -88,7 +88,7 @@ std::string EMJson::serialize_value(const EMJsonData& data) {
                 return arr_str;
             }
 
-            case OBJECT:
+            case EMJ_TYPE_OBJECT:
                 return to_json(data);
 
             default:

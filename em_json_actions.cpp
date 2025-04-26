@@ -89,7 +89,7 @@ DFActionFlow EMJson::emj_boolean_null_handler(
 
         auto& obj = std::get<EMJsonObject>(obj_wrapper.value);
     
-        obj[field_name].type = EMJsonDataTypes::BOOLEAN;
+        obj[field_name].type = EMJsonDataTypes::EMJ_TYPE_BOOLEAN;
     
         switch (token.type)
         {
@@ -101,7 +101,7 @@ DFActionFlow EMJson::emj_boolean_null_handler(
             break;
         case EMJ_NULL:
             obj[field_name] = nullptr;
-            obj[field_name].type = EMJsonDataTypes::NULLVAL;
+            obj[field_name].type = EMJsonDataTypes::EMJ_TYPE_NULLVAL;
             break;
         }
 
@@ -142,7 +142,7 @@ DFActionFlow EMJson::emj_number_handler(
     if (field_name != "") {
         auto& obj = std::get<EMJsonObject>(obj_wrapper.value);
 
-        obj[field_name].type = EMJsonDataTypes::NUMBER;
+        obj[field_name].type = EMJsonDataTypes::EMJ_TYPE_NUMBER;
     
         obj[field_name].value = atof(std::string(token.value).c_str());
     } else {
@@ -169,7 +169,7 @@ DFActionFlow EMJson::emj_string_handler(
     if (field_name != "") {
         auto& obj = std::get<EMJsonObject>(obj_wrapper.value);
 
-        obj[field_name].type = EMJsonDataTypes::STRING;
+        obj[field_name].type = EMJsonDataTypes::EMJ_TYPE_STRING;
 
         obj[field_name].value = std::string(token.value).substr(1, token.value.length() - 2); 
     } else {
@@ -216,7 +216,7 @@ DFActionFlow EMJson::emj_object_handler(
 
         if (field_name != "") {
             auto& obj = std::get<EMJsonObject>(obj_wrapper.value);
-            obj[field_name].type = EMJsonDataTypes::OBJECT;
+            obj[field_name].type = EMJsonDataTypes::EMJ_TYPE_OBJECT;
         
             obj[field_name] = nest_obj;
         } else {
@@ -312,7 +312,7 @@ DFActionFlow EMJson::emj_array_handler(
         auto& obj = std::get<EMJsonObject>(obj_wrapper.value);
 
     
-        obj[field_name].type = EMJsonDataTypes::ARRAY;
+        obj[field_name].type = EMJsonDataTypes::EMJ_TYPE_ARRAY;
     
         obj[field_name] = nest_obj;
         

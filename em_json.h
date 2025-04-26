@@ -1,12 +1,8 @@
-// em_json.h
 #ifndef EM_JSON
 #define EM_JSON
 
 #include "em_jsondata.h"
 #include <string>
-#include <iostream> // Ensure iostream is included for logging
-
-#include "em_jsontypes.h"
 
 #include "sys/DFAction.h"
 #include "sys/DFMatcher.h"
