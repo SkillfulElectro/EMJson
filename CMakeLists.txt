@@ -30,8 +30,13 @@ target_compile_features(emjson PRIVATE cxx_std_17)
 add_executable(emjson_test main.cpp)
 
 
+target_link_directories(emjson_test PRIVATE
+    ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}
+)
+
 target_link_libraries(emjson_test PRIVATE emjson)
 
 
 enable_testing()
+
 add_test(NAME RunEmjsonTest COMMAND emjson_test)
