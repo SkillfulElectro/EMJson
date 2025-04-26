@@ -29,12 +29,13 @@ target_compile_features(emjson PRIVATE cxx_std_17)
 
 add_executable(emjson_test main.cpp)
 
-
+# Use generator expression to get the directory containing the library file
 target_link_directories(emjson_test PRIVATE
-    ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}
+    $<TARGET_FILE_DIR:emjson>
 )
 
-target_link_libraries(emjson_test PRIVATE emjson)
+# Link publicly just in case it affects property propagation (though PRIVATE should be fine)
+target_link_libraries(emjson_test PUBLIC emjson)
 
 
 enable_testing()
