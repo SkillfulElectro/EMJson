@@ -15,31 +15,41 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         build_type: [Release]
+        # Add clang to the list of compilers to potentially use
         c_compiler: [gcc, clang, cl]
         include:
+          # Keep existing windows-latest with cl
           - os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
+          # Add windows-latest with clang
+          - os: windows-latest
+            c_compiler: clang
+            cpp_compiler: clang++
+          # Keep existing Linux configs
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
+          # Keep existing macOS config
           - os: macos-latest
             c_compiler: clang
             cpp_compiler: clang++
         exclude:
+          # Exclude gcc on windows (not typically set up by default)
           - os: windows-latest
             c_compiler: gcc
-          - os: windows-latest
-            c_compiler: clang
+          # Exclude cl on Linux/macOS
           - os: ubuntu-latest
             c_compiler: cl
           - os: macos-latest
-            c_compiler: gcc
-          - os: macos-latest
             c_compiler: cl
+          # Exclude gcc on macOS (we only defined clang there)
+          - os: macos-latest
+            c_compiler: gcc
+          # NOTE: We *removed* the exclusion for clang on windows-latest
 
     steps:
     - uses: actions/checkout@v4
