@@ -1,3 +1,4 @@
+# .github/workflows/ci.yml
 name: CMake on multiple platforms
 
 on:
@@ -9,13 +10,11 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         build_type: [Release]
-        c_compiler: [gcc, clang, cl]
         include:
           - os: windows-latest
             c_compiler: cl
@@ -49,35 +48,25 @@ jobs:
       id: strings
       shell: bash
       run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+        echo "build_output_dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
     - name: Configure CMake
-      run: >
-        cmake -B ${{ steps.strings.outputs.build-output-dir }}
-        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
-        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -S ${{ github.workspace }}
+      run: |
+        cmake -B ${{ steps.strings.outputs.build_output_dir }} \
+              -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} \
+              -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} \
+              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+              -S ${{ github.workspace }}
 
     - name: Build
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
-
-    - name: List Build Directory Contents (Windows)
-      if: matrix.os == 'windows-latest'
-      shell: cmd
-      run: |
-        echo "--- Listing build/${{ matrix.build_type }} ---"
-        dir ${{ steps.strings.outputs.build-output-dir }}\${{ matrix.build_type }}
-        echo "--- Listing build (root) ---"
-        dir ${{ steps.strings.outputs.build-output-dir }}
-      continue-on-error: true
+      run: cmake --build ${{ steps.strings.outputs.build_output_dir }} --config ${{ matrix.build_type }}
 
     - name: Test
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
+      working-directory: ${{ steps.strings.outputs.build_output_dir }}
       run: ctest -C ${{ matrix.build_type }} --output-on-failure
 
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v4
       with:
         name: build-${{ matrix.os }}-${{ matrix.c_compiler }}-${{ matrix.build_type }}
-        path: ${{ steps.strings.outputs.build-output-dir }}
+        path: ${{ steps.strings.outputs.build_output_dir }}
