@@ -251,7 +251,7 @@ DFActionFlow EMJson::emj_main_obj(
     case EMJ_DOUBLE_DOT:
         return {DFACTION_GO_TO_SP_DFA , EMJ_TYPE_CHECK};
     case EMJ_CLOSE_BRACE:{
-        return {DFACTION_SAFE , DFActionState(0)};
+        return {DFACTION_COMPILE_DONE , DFActionState(0)};
     }
     }
 
