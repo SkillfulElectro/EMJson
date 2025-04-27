@@ -43,6 +43,7 @@ struct PrevDFAState {
 struct DFActionReturnVal {
 	DFActionReturnCode status;
 	std::vector<PrevDFAState> dfas;
+	size_t end_tokens_index;
 };
 
 class DFAction {
@@ -73,10 +74,10 @@ protected:
 	}
 
 	inline DFActionReturnVal run_dfa_on(const std::vector<DFActionToken>& tokens 
-		, const DFActionState& start_state) {
+		, const DFActionState& start_state , size_t index_in_tks = 0) {
 
 		if (machine == nullptr) {
-			return { NULL_MAIN_DFA_PASSED , std::vector<PrevDFAState>() };
+			return { NULL_MAIN_DFA_PASSED , std::vector<PrevDFAState>() , index_in_tks};
 		}
 
 		std::vector<PrevDFAState> dfa_stack;
@@ -85,7 +86,8 @@ protected:
 
 		DFActionState state = start_state;
 
-		for (size_t index{ 0 }; index < tokens.size();) {
+		size_t index{ index_in_tks };
+		for (; index < tokens.size();) {
 
 			bool next_index = true;
 
@@ -120,10 +122,10 @@ protected:
 		}
 
 		if (!dfa_stack.empty()) {
-			return { FAILED_TO_DO_ALL_REDUCTIONS , dfa_stack };
+			return { FAILED_TO_DO_ALL_REDUCTIONS , dfa_stack , index };
 		}
 
-		return {ALL_REDUCTIONS_ARE_COMPLETED, dfa_stack };
+		return {ALL_REDUCTIONS_ARE_COMPLETED, dfa_stack , index };
 	}
 };
 
