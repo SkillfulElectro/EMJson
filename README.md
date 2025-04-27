@@ -1,6 +1,6 @@
 # EMJson C++ Library
 
-A C++ library for parsing JSON data, built using a DFAction approach.
+A C++ library for parsing JSON data, built using a JuaLang sys approach.
 
 ## Prerequisites
 
