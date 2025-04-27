@@ -1,4 +1,6 @@
-# EMJson C++ Library
+# EMJson
+
+> this library is backbone of EMJax protocol , new features under development
 
 A C++ library for parsing JSON data, built using a JuaLang sys approach.
 
