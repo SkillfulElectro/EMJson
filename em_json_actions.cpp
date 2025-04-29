@@ -245,6 +245,8 @@ DFActionFlow EMJson::emj_main_obj(
     switch (token.type)
     {
     case EMJ_OP_BRACE:
+        obj_stack.push_back(EMJsonObject{});
+        
         return {DFACTION_GO_TO_SP_DFA , EMJ_KEY_HANDLER};
     case EMJ_CAMMA:
         return {DFACTION_GO_TO_SP_DFA , EMJ_KEY_HANDLER};

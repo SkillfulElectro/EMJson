@@ -17,6 +17,11 @@ class EMJson : public DFAction {
     std::vector<EMJsonData> obj_stack;
     std::vector<std::string> field_stack;
 
+    std::vector<DFActionToken> tokens;
+    size_t index_tk;
+
+    DFActionContext ctx;
+
 protected:
 
 	DFActionFlow action_function(
@@ -74,7 +79,9 @@ private:
 public:
     EMJson();
 
-    EMJsonData parse(const std::string& json);
+    EMJsonParsedVal parse(const std::string& json , size_t index_file = 0);
+
+    void reset_parser_state();
 
     static std::string to_json(const EMJsonData& data);
 };

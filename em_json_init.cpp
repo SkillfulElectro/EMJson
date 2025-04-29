@@ -63,6 +63,9 @@ void EMJson::init_dfaction() {
 }
 
 EMJson::EMJson() {
+    index_tk = 0;
     init_lexer();
     init_dfaction();
+
+    ctx = get_default_context(EMJ_MAIN_OBJ);
 }

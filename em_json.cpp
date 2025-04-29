@@ -99,41 +99,75 @@ std::string EMJson::serialize_value(const EMJsonData& data) {
     }
 }
 
-EMJsonData EMJson::parse(const std::string& json) {
+void EMJson::reset_parser_state() {
     obj_stack.clear();
     field_stack.clear();
+    tokens.clear();
+    index_tk = 0;
+    ctx = get_default_context(EMJ_MAIN_OBJ);
+}
 
-    obj_stack.push_back(EMJsonObject{});
+EMJsonParsedVal EMJson::parse(const std::string& json , size_t index_file) {
 
-    size_t index = 0;
+    size_t index_in_file = index_file;
 
     DFMatcherRes res;
 
-    std::vector<DFActionToken> tokens;
-
+    DFActionReturnVal comp_res;
 
     do {
-        res = lexer.get_token(json, index);
+        res = lexer.get_token(json, index_in_file);
 
+        if (res.status == NO_MATCHED_TOKEN) {
+            return {
+                EMJ_MORE_INPUT_OR_UNKNOWN_CHAR , 
+                index_in_file ,
+                &obj_stack,
+            };
+        }
 
         DFActionToken tok;
         tok.value = res.value;
         tok.type = (DFActionType) res.token_identifier;
 
+        
 
+        comp_res = this->run_dfa_on(tokens , EMJ_MAIN_OBJ , &index_tk , &ctx);
+
+        if (comp_res.status == PANIC_WHILE_PROCESSING) {
+            return {
+                EMJ_JSON_SYNTAX_ERROR , 
+                index_in_file ,
+                &obj_stack,
+            };
+        } else if (comp_res.status == ALL_REDUCTIONS_ARE_COMPLETED) {
+            tokens.clear();
+            index_tk = 0;
+
+            ctx = get_default_context(EMJ_MAIN_OBJ);
+        }
 
         tokens.push_back(tok);
     } while (res.status != END_OF_FILE);
 
+    comp_res = this->run_dfa_on(tokens , EMJ_MAIN_OBJ , &index_tk , &ctx);
 
+    if (comp_res.status == PANIC_WHILE_PROCESSING) {
+        return {
+            EMJ_JSON_SYNTAX_ERROR , 
+            index_in_file ,
+            &obj_stack,
+        };
+    } else if (comp_res.status == ALL_REDUCTIONS_ARE_COMPLETED) {
+        tokens.clear();
+        index_tk = 0;
 
-    auto comp_res = this->run_dfa_on(tokens, EMJ_MAIN_OBJ);
-
-
-
-    if (comp_res.status == FAILED_TO_DO_ALL_REDUCTIONS) {
-        std::cout << "COMPILATION FAILED !\n";
+        ctx = get_default_context(EMJ_MAIN_OBJ);
     }
 
-    return obj_stack.back();
+    return {
+        EMJ_SUCCESS , 
+        index_in_file ,
+        &obj_stack,
+    };
 }
