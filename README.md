@@ -1,6 +1,6 @@
 # EMJson
 
-> this library is stream based Json Parser , backbone of EMJax Protocol
+> this library is intended to be used for parsing streams of Json objects
 
 A C++ library for parsing JSON data, built using a JuaLang sys approach.
 
