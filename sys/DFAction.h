@@ -141,6 +141,8 @@ protected:
 
 			DFActionFlow change_state = action_function(index , tokens , state, next_index);
 
+
+
 			if (next_index)
 			++index;
 
@@ -149,6 +151,8 @@ protected:
 				return {PANIC_WHILE_PROCESSING, dfa_stack , index };
 			}
 			else if (change_state.code == DFACTION_GO_TO_SP_DFA) {
+
+
 				dfa_stack.push_back({
 					dfa , state
 					});
@@ -157,15 +161,21 @@ protected:
 				state = change_state.state_name;
 			}
 			else if (change_state.code == DFACTION_BACK_TO_PREV) {
+
+
 				dfa = dfa_stack.back().dfa;
 				state = dfa_stack.back().state;
 
 				dfa_stack.pop_back();
+			} else if (change_state.code == DFACTION_COMPILE_DONE) {
+
+
+				break;
 			}
 			else if (change_state.code != DFACTION_DO_NOT_CHANGE_STATE) {
+
+
 				state =  dfa[state][tokens[index].type];
-			} else if (change_state.code == DFACTION_COMPILE_DONE) {
-				break;
 			}
 		}
 

@@ -130,9 +130,17 @@ EMJsonParsedVal EMJson::parse(const std::string& json , size_t index_file) {
         tok.value = res.value;
         tok.type = (DFActionType) res.token_identifier;
 
-        
+        tokens.push_back(tok);
+    } while (res.status != END_OF_FILE);
+
+
+
+    for (;index_tk < tokens.size();) {
+
 
         comp_res = this->run_dfa_on(tokens , EMJ_MAIN_OBJ , &index_tk , &ctx);
+
+
 
         if (comp_res.status == PANIC_WHILE_PROCESSING) {
             return {
@@ -141,29 +149,14 @@ EMJsonParsedVal EMJson::parse(const std::string& json , size_t index_file) {
                 &obj_stack,
             };
         } else if (comp_res.status == ALL_REDUCTIONS_ARE_COMPLETED) {
-            tokens.clear();
+            tokens.erase(tokens.begin() , tokens.begin() + index_tk);
             index_tk = 0;
 
             ctx = get_default_context(EMJ_MAIN_OBJ);
         }
-
-        tokens.push_back(tok);
-    } while (res.status != END_OF_FILE);
-
-    comp_res = this->run_dfa_on(tokens , EMJ_MAIN_OBJ , &index_tk , &ctx);
-
-    if (comp_res.status == PANIC_WHILE_PROCESSING) {
-        return {
-            EMJ_JSON_SYNTAX_ERROR , 
-            index_in_file ,
-            &obj_stack,
-        };
-    } else if (comp_res.status == ALL_REDUCTIONS_ARE_COMPLETED) {
-        tokens.clear();
-        index_tk = 0;
-
-        ctx = get_default_context(EMJ_MAIN_OBJ);
     }
+
+
 
     return {
         EMJ_SUCCESS , 
