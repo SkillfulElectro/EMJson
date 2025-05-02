@@ -64,6 +64,7 @@ void EMJson::init_dfaction() {
 
 EMJson::EMJson() {
     index_tk = 0;
+    parsed_len = 0;
     init_lexer();
     init_dfaction();
 

@@ -15,6 +15,8 @@ class EMJson : public DFAction {
     void init_dfaction();
 
     std::vector<EMJsonData> obj_stack;
+    size_t parsed_len;
+
     std::vector<std::string> field_stack;
 
     std::vector<DFActionToken> tokens;

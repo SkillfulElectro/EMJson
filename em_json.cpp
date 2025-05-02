@@ -123,6 +123,7 @@ EMJsonParsedVal EMJson::parse(const std::string& json , size_t index_file) {
                 EMJ_MORE_INPUT_OR_UNKNOWN_CHAR , 
                 index_in_file ,
                 &obj_stack,
+                &parsed_len
             };
         }
 
@@ -147,9 +148,11 @@ EMJsonParsedVal EMJson::parse(const std::string& json , size_t index_file) {
                 EMJ_JSON_SYNTAX_ERROR , 
                 index_in_file ,
                 &obj_stack,
+                &parsed_len
             };
         } else if (comp_res.status == ALL_REDUCTIONS_ARE_COMPLETED) {
             tokens.erase(tokens.begin() , tokens.begin() + index_tk);
+            parsed_len += 1;
             index_tk = 0;
 
             ctx = get_default_context(EMJ_MAIN_OBJ);
@@ -162,5 +165,6 @@ EMJsonParsedVal EMJson::parse(const std::string& json , size_t index_file) {
         EMJ_SUCCESS , 
         index_in_file ,
         &obj_stack,
+        &parsed_len
     };
 }

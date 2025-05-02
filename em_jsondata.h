@@ -95,17 +95,6 @@ struct EMJsonData {
     bool is_null() const;
 };
 
-enum EMJsonStatusCode {
-    EMJ_NO_TOKEN_FOUND,
-
-};
-
-struct EMJsonParseVal {
-    EMJsonStatusCode status;
-    size_t index_in_file;
-    std::vector<EMJsonData>& objects;
-};
-
 enum EMJsonParseCode {
     EMJ_MORE_INPUT_OR_UNKNOWN_CHAR,
     EMJ_JSON_SYNTAX_ERROR,
@@ -115,7 +104,10 @@ enum EMJsonParseCode {
 struct EMJsonParsedVal {
     EMJsonParseCode status;
     size_t index_in_file;
+    /// @brief ref to all the parsed data in the system
     std::vector<EMJsonData>* parsed_objects;
+    /// @brief ref to parsed_len which indicates , how much of the parsed_object from index zero is parsed and wont be modified
+    size_t* parsed_len;
 };
 
 #endif
