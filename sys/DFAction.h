@@ -143,10 +143,12 @@ protected:
 
 
 
-			if (next_index)
-			++index;
+			if (change_state.code == DFACTION_SAFE) {
 
-			if (change_state.code == DFACTION_PANIC) {
+
+				state =  dfa[state][tokens[index].type];
+			}
+			else if (change_state.code == DFACTION_PANIC) {
 				std::cout << "PANIC";
 				return {PANIC_WHILE_PROCESSING, dfa_stack , index };
 			}
@@ -172,11 +174,10 @@ protected:
 
 				break;
 			}
-			else if (change_state.code != DFACTION_DO_NOT_CHANGE_STATE) {
 
 
-				state =  dfa[state][tokens[index].type];
-			}
+			if (next_index)
+			++index;
 		}
 
 		if (!dfa_stack.empty()) {
